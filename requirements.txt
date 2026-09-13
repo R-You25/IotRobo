@@ -1,0 +1,5 @@
+boto3==1.43.46
+pyserial==3.5
+PyAudio==0.2.14
+aws_sdk_bedrock_runtime==0.7.0
+smithy-aws-core==0.7.0
