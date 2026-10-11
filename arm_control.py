@@ -283,7 +283,12 @@ DANCE_VARIANTS = [dance1, dance2, dance3]
 def dance(ser: serial.Serial) -> str:
     variant = random.choice(DANCE_VARIANTS)
     logger.info("dance: picked %s", variant.__name__)
-    return variant(ser)
+    result = json.loads(variant(ser))
+    result["angles"] = {
+        "right": current_angles[CHANNELS["right"]],
+        "left": current_angles[CHANNELS["left"]],
+    }
+    return json.dumps(result)
 
 
 def dispatch_tool(ser: serial.Serial, tool_name: str, tool_input: dict) -> str:
@@ -331,7 +336,7 @@ def build_system_prompt_en() -> str:
         f"Angles at the start of this session: right arm (channel 4) = {current_angles[4]} degrees, "
         f"left arm (channel 3) = {current_angles[3]} degrees. "
         "This system prompt is only sent once, so those starting angles go stale as the "
-        "conversation continues. Every tool result (from move_servo, wave_hand, raise_hands, "
+        "conversation continues. Every tool result (from move_servo, wave_hand, raise_hands, dance, "
         "or stand_at_attention) reports the resulting angle(s) for the channel(s) it moved — "
         "always treat the angle from the most recent tool result for a channel as that "
         "channel's current angle, instead of the starting angles above. "
